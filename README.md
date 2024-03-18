@@ -1,4 +1,4 @@
-# Self-supervised Monocular Depth Estimation: Let's Talk About The Weather
+# Self-supervised Monocular Depth Estimation: Let's Talk About The Weather (ICCV23)
 
 
  >**Self-supervised Monocular Depth Estimation: Let's Talk About The Weather
@@ -7,18 +7,20 @@
 
 
 
-https://github.com/kieran514/Robust-Depth/assets/51883968/1946b0c7-2166-4c7a-95e1-0038eb0acee8
+<p align="center">
+  <img src="assets/movie.gif" alt="Robustness" width="600" />
+</p>
 
 If you find our work useful in your research, kindly consider citing our paper:
 
 ```
-@misc{saunders2023selfsupervised,
-      title={Self-supervised Monocular Depth Estimation: Let's Talk About The Weather}, 
-      author={Kieran Saunders and George Vogiatzis and Luis Manso},
-      year={2023},
-      eprint={2307.08357},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@InProceedings{Saunders_2023_ICCV,
+    author    = {Saunders, Kieran and Vogiatzis, George and Manso, Luis J.},
+    title     = {Self-supervised Monocular Depth Estimation: Let's Talk About The Weather},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2023},
+    pages     = {8907-8917}
 }
 ```
 
@@ -85,7 +87,7 @@ First, we create a rainy version of the KITTI dataset using a GAN. We download C
 ```
 git clone https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
 ```
-Here we trained a CycleGAN model to convert clear to rainy using the NuScenes dataset. We have provided the pre-trained model for ease of use [RainGAN](https://drive.google.com/drive/folders/1Yb67rvfTyBfwpcoRx98Ubw_KlGPLV3jc?usp=drive_link) which needs to be placed inside pytorch-CycleGAN-and-pix2pix/checkpoints/rain_cyclegan/. Before we continue, please locate pytorch-CycleGAN-and-pix2pix/util/visualizer.py and add the following if statement on line 41 (indent until line 50). 
+Here we trained a CycleGAN model to convert clear to rainy using the NuScenes dataset. We have provided the pre-trained model for ease of use [RainGAN](https://drive.google.com/file/d/1ASzOoeX3UKAr_c2-Y_Rrt0en4QnQfI52/view?usp=sharing) which needs to be placed inside pytorch-CycleGAN-and-pix2pix/checkpoints/rain_cyclegan/. Before we continue, please locate pytorch-CycleGAN-and-pix2pix/util/visualizer.py and add the following if statement on line 41 (indent until line 50). 
 ```
 if label != 'real':
 ```
@@ -101,7 +103,7 @@ Next, we must create a depth version of the KITTI dataset using pre-trained weig
 ```
 python scripts/depth_simple.py
 ```
-Now, we clone the repository from [rain-rendering](https://github.com/astra-vision/rain-rendering). Following the provided steps on their GitHub page, create the required environment: 
+Now, we clone the repository from [rain-rendering](https://github.com/astra-vision/rain-rendering). Following the provided steps on their [GitHub page](https://github.com/astra-vision/rain-rendering), create the required environment: 
 ```
 git clone https://github.com/astra-vision/rain-rendering
 
@@ -127,7 +129,7 @@ out_rainy_path = os.path.join(out_dir, '{}.png'.format(file_name[:-4]))
 ```
 and comment out lines 457 and 468.
 
-Finally, you will need particles as provided by [rain streak database](https://www.cs.columbia.edu/CAVE/databases/rain_streak_db/databases.zip). For ease of use, I have provided the particle files (in the required order) which should be extracted in /rain-rendering/data/particles/ [found here](https://drive.google.com/file/d/1-nmBojZDz_-FXkUbreIyKOQlxuBeVLBp/view?usp=drive_link).
+Finally, you will need particles as provided by [rain streak database](https://www.cs.columbia.edu/CAVE/databases/rain_streak_db/databases.zip). For ease of use, I have provided the particle files (in the required order) which should be extracted in /rain-rendering/data/particles/ [found here](https://drive.google.com/file/d/1Dkle1mFBUR2qKfamxoWZE88FoHmcUyzC/view?usp=sharing).
 
 From here you can run this script. (max_thread on line 176 (inside main_threaded.py) is set to 10, change this if you wish)
 ```
@@ -157,12 +159,12 @@ Please direct over to the [CoMoGAN](https://github.com/astra-vision/CoMoGAN) Git
 **~20 hours**
 
 ### Fog 
-For fog generation, we have used a script strongly inspired by [rain-rendering](https://github.com/astra-vision/rain-rendering), which will create a foggy augmentation for rain, night, clear, dawn, dusk, dawn+rain, night+rain, dusk+rain images. As this script was personally provided by the authors of [rain-rendering](https://github.com/astra-vision/rain-rendering) we choose not to share it as we have not received permission.
-<!---```
-bash scripts/fogOffical.sh 
+For fog generation, we have used a script strongly inspired by [rain-rendering](https://github.com/astra-vision/rain-rendering), which will create a foggy augmentation for rain, night, clear, dawn, dusk, dawn+rain, night+rain and dusk+rain images. Permission has been granted to use the provided script to create foggy augmentations from the authors of [rain-rendering](https://github.com/astra-vision/rain-rendering).
+```
+python scripts/fogRenderOffical.py 
 ```
 **~5 hours**
---->
+
 #### File Format
 ```
 ├── KITTI_RAW
@@ -223,10 +225,10 @@ bash scripts/fogOffical.sh
 
 | Model Name          | *Sunny* Abs_Rel | *Bad Weather* Abs_Rel | Model resolution  | Model  |
 |-------------------------|-------------------|--------------------------|-----------------|------|
-| [`ViT`](https://drive.google.com/drive/folders/1oKT2oAPp-7altFTvPKR2d7FdgXN9xMG3?usp=sharing)          | 0.100 | 0.114 | 640 x 192                | ViT        |
-| [`Resnet18`](https://drive.google.com/drive/folders/1QSHZjOk6Ufw52BGjJmuxV7PJQNisH5Kk?usp=sharing)        | 0.115 | 0.133 | 640 x 192                |  Resnet18          |
+| [`ViT`](https://drive.google.com/drive/folders/13vtwYM2OHu4iBl6fSpdxXyjFZiI7K8_b?usp=sharing)         | 0.100 | 0.114 | 640 x 192                | ViT        |
+| [`Resnet18`](https://drive.google.com/drive/folders/1x1dGzKhMY7k6Fq-47yU6Qa0bYtv7AgEH?usp=sharing)      | 0.115 | 0.133 | 640 x 192                |  Resnet18          |
 
-##KITTI Ground Truth 
+## KITTI Ground Truth 
 
 We must prepare ground truth files for validation and training.
 ```
@@ -295,8 +297,22 @@ python Robust-Depth/evaluate_depth.py --load_weights_folder {weights_directory} 
 python Robust-Depth/evaluate_depth.py --load_weights_folder {weights_directory} --eval_mono --data_path data/KITTI_RAW --eval_split eigen_benchmark --robust_test --robust_augment blur
 ```
 
+### Out-Of-Distribution data
+
+#### DrivingStereo
+Download the "Different weathers" from the [DrivingStereo](https://drivingstereo-dataset.github.io/) into a folder called DrivingStereo. Specifically, download the depth-map-full-size and left-image-full-size. These extracted files should be placed inside of the weather condition folder, e.g. sunny. 
+
+Next, we create ground truth depth data for the sunny weather conditions (there are four choices sunny, rainy, cloudy and foggy):
+```
+python Robust-Depth/export_gt_depth.py --data_path data/DrivingStereo --split sunny
+```
+Now we can run the evaluation:
+```
+python Robust-Depth/evaluate_depth.py --eval_mono --load_weights_folder {weights_directory} --data_path data/DrivingStereo --eval_split sunny
+```
+
 ##### Testing
-Evaluation for Cityscape Foggy, DrivingStereo and NuScenes-Night coming soon. 
+Evaluation for Cityscape Foggy and NuScenes-Night coming soon. 
 
 
 
@@ -304,6 +320,9 @@ Evaluation for Cityscape Foggy, DrivingStereo and NuScenes-Night coming soon.
 
 * [Monodepth2](https://github.com/nianticlabs/monodepth2) (ICCV 2019)
 * [MonoViT](https://github.com/zxcqlf/MonoViT) 
-
-
+* [Rain-Rendering](https://github.com/astra-vision/rain-rendering)
+* [CoMoGAN](https://github.com/astra-vision/CoMoGAN)
+* [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)
+* [robustness](https://github.com/hendrycks/robustness)
+* [AutoMold](https://github.com/UjjwalSaxena/Automold--Road-Augmentation-Library)
 
