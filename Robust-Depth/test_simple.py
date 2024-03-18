@@ -82,7 +82,7 @@ def test_simple(args):
 
         encoder = networksvit.mpvit_small() #networks.ResnetEncoder(opt.num_layers, False)
         encoder.num_ch_enc = [64,128,216,288,288]  # = networks.ResnetEncoder(opt.num_layers, False)
-        depth_decoder = networksvit.DepthDecoder()
+        depth_decoder = networksvit.HR_DepthDecoder()
 
         model_dict = encoder.state_dict()
         encoder.load_state_dict({k: v for k, v in encoder_dict.items() if k in model_dict})

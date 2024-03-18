@@ -1,3 +1,3 @@
-from .hr_decoder import DepthDecoder
+from .hr_decoder import HR_DepthDecoder
 from .mpvit import *
 from .nets import DeepNet

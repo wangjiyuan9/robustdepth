@@ -7,9 +7,9 @@ from collections import OrderedDict
 from .hr_layers import *
 
 
-class DepthDecoder(nn.Module):
+class HR_DepthDecoder(nn.Module):
     def __init__(self, ch_enc = [64,128,216,288,288], scales=range(4),num_ch_enc = [ 64, 64, 128, 256, 512 ], num_output_channels=1):
-        super(DepthDecoder, self).__init__()
+        super(HR_DepthDecoder, self).__init__()
         self.num_output_channels = num_output_channels
         self.num_ch_enc = num_ch_enc
         self.ch_enc = ch_enc

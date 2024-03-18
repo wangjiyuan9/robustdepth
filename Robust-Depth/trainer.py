@@ -11,7 +11,6 @@ import numpy as np
 import time
 import random
 from collections import Counter
-import progressbar
 from tqdm import tqdm
 import wandb
 import torch
@@ -644,18 +643,12 @@ class Trainer:
         losses["loss"] = total_loss
         return losses
 
-
     def compute_proxy_supervised_loss(self, pred, target, loss_mask):        
         loss = torch.log(torch.abs(target - pred) + 1)
         loss = loss * loss_mask
         loss = loss.sum() / (loss_mask.sum() + 1e-7)
 
         return loss
-
-    def gradient(self, D):
-        D_dy = D[:, :, 1:] - D[:, :, :-1]
-        D_dx = D[:, :, :, 1:] - D[:, :, :, :-1]
-        return D_dx, D_dy
 
     def update_depth_scale(self, inputs, outputs):
         do_scale = inputs["do_scale"]

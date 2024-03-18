@@ -6,7 +6,7 @@ import torch.nn as nn
 
 from collections import OrderedDict
 
-from .hr_decoder import DepthDecoder
+from .hr_decoder import HR_DepthDecoder
 from .mpvit import *
 
 
@@ -20,7 +20,7 @@ class DeepNet(nn.Module):
         self.scales = scales
         if self.type =='mpvitnet':
             self.encoder = mpvit_small()
-            self.decoder = DepthDecoder()
+            self.decoder = HR_DepthDecoder()
  
         else:
             print("wrong type of the networks, only depthnet and posenet")

@@ -1,4 +1,3 @@
-
 import numpy as np
 import math
 
@@ -12,7 +11,7 @@ from functools import partial
 from torch import nn, einsum
 from torch.nn.modules.batchnorm import _BatchNorm
 
-from mmcv.runner import load_checkpoint,load_state_dict
+from mmcv.runner import load_checkpoint, load_state_dict
 from mmcv.cnn import build_norm_layer
 
 from mmseg.utils import get_root_logger
@@ -24,6 +23,7 @@ __all__ = [
     "mpvit_small",
     "mpvit_base",
 ]
+
 
 def _cfg_mpvit(url="", **kwargs):
     return {
@@ -45,12 +45,12 @@ class Mlp(nn.Module):
     """Feed-forward network (FFN, a.k.a. MLP) class."""
 
     def __init__(
-        self,
-        in_features,
-        hidden_features=None,
-        out_features=None,
-        act_layer=nn.GELU,
-        drop=0.0,
+            self,
+            in_features,
+            hidden_features=None,
+            out_features=None,
+            act_layer=nn.GELU,
+            drop=0.0,
     ):
         super().__init__()
         out_features = out_features or in_features
@@ -68,19 +68,20 @@ class Mlp(nn.Module):
         x = self.drop(x)
         return x
 
+
 class Conv2d_BN(nn.Module):
     def __init__(
-        self,
-        in_ch,
-        out_ch,
-        kernel_size=1,
-        stride=1,
-        pad=0,
-        dilation=1,
-        groups=1,
-        bn_weight_init=1,
-        act_layer=None,
-        norm_cfg=dict(type="BN"),
+            self,
+            in_ch,
+            out_ch,
+            kernel_size=1,
+            stride=1,
+            pad=0,
+            dilation=1,
+            groups=1,
+            bn_weight_init=1,
+            act_layer=None,
+            norm_cfg=dict(type="BN"),
     ):
         super().__init__()
         self.conv = torch.nn.Conv2d(
@@ -111,15 +112,15 @@ class DWConv2d_BN(nn.Module):
     """
 
     def __init__(
-        self,
-        in_ch,
-        out_ch,
-        kernel_size=1,
-        stride=1,
-        norm_layer=nn.BatchNorm2d,
-        act_layer=nn.Hardswish,
-        bn_weight_init=1,
-        norm_cfg=dict(type="BN"),
+            self,
+            in_ch,
+            out_ch,
+            kernel_size=1,
+            stride=1,
+            norm_layer=nn.BatchNorm2d,
+            act_layer=nn.Hardswish,
+            bn_weight_init=1,
+            norm_cfg=dict(type="BN"),
     ):
         super().__init__()
         self.dwconv = nn.Conv2d(
@@ -154,6 +155,7 @@ class DWConv2d_BN(nn.Module):
 
         return x
 
+
 class DWCPatchEmbed(nn.Module):
     """
     Depthwise Convolutional Patch Embedding layer
@@ -161,14 +163,14 @@ class DWCPatchEmbed(nn.Module):
     """
 
     def __init__(
-        self,
-        in_chans=3,
-        embed_dim=768,
-        patch_size=16,
-        stride=1,
-        pad=0,
-        act_layer=nn.Hardswish,
-        norm_cfg=dict(type="BN"),
+            self,
+            in_chans=3,
+            embed_dim=768,
+            patch_size=16,
+            stride=1,
+            pad=0,
+            act_layer=nn.Hardswish,
+            norm_cfg=dict(type="BN"),
     ):
         super().__init__()
 
@@ -185,6 +187,7 @@ class DWCPatchEmbed(nn.Module):
         x = self.patch_conv(x)
 
         return x
+
 
 class Patch_Embed_stage(nn.Module):
     def __init__(self, embed_dim, num_path=4, isPool=False, norm_cfg=dict(type="BN")):
@@ -233,8 +236,10 @@ class ConvPosEnc(nn.Module):
 
         return x
 
+
 class ConvRelPosEnc(nn.Module):
     """Convolutional relative position encoding."""
+
     def __init__(self, Ch, h, window):
         """Initialization.
 
@@ -274,7 +279,7 @@ class ConvRelPosEnc(nn.Module):
                 padding=(padding_size, padding_size),
                 dilation=(dilation, dilation),
                 groups=cur_head_split * Ch,
-                )
+            )
             self.conv_list.append(cur_conv)
             self.head_splits.append(cur_head_split)
         self.channel_splits = [x * Ch for x in self.head_splits]
@@ -307,14 +312,14 @@ class FactorAtt_ConvRelPosEnc(nn.Module):
     """Factorized attention with convolutional relative position encoding class."""
 
     def __init__(
-        self,
-        dim,
-        num_heads=8,
-        qkv_bias=False,
-        qk_scale=None,
-        attn_drop=0.0,
-        proj_drop=0.0,
-        shared_crpe=None,
+            self,
+            dim,
+            num_heads=8,
+            qkv_bias=False,
+            qk_scale=None,
+            attn_drop=0.0,
+            proj_drop=0.0,
+            shared_crpe=None,
     ):
         super().__init__()
         self.num_heads = num_heads
@@ -368,16 +373,16 @@ class FactorAtt_ConvRelPosEnc(nn.Module):
 
 class MHCABlock(nn.Module):
     def __init__(
-        self,
-        dim,
-        num_heads,
-        mlp_ratio=3,
-        drop_path=0.0,
-        qkv_bias=True,
-        qk_scale=None,
-        norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        shared_cpe=None,
-        shared_crpe=None,
+            self,
+            dim,
+            num_heads,
+            mlp_ratio=3,
+            drop_path=0.0,
+            qkv_bias=True,
+            qk_scale=None,
+            norm_layer=partial(nn.LayerNorm, eps=1e-6),
+            shared_cpe=None,
+            shared_crpe=None,
     ):
         super().__init__()
 
@@ -411,14 +416,14 @@ class MHCABlock(nn.Module):
 
 class MHCAEncoder(nn.Module):
     def __init__(
-        self,
-        dim,
-        num_layers=1,
-        num_heads=8,
-        mlp_ratio=3,
-        drop_path_list=[],
-        qk_scale=None,
-        crpe_window={3: 2, 5: 3, 7: 3},
+            self,
+            dim,
+            num_layers=1,
+            num_heads=8,
+            mlp_ratio=3,
+            drop_path_list=[],
+            qk_scale=None,
+            crpe_window={3: 2, 5: 3, 7: 3},
     ):
         super().__init__()
 
@@ -454,12 +459,12 @@ class MHCAEncoder(nn.Module):
 
 class ResBlock(nn.Module):
     def __init__(
-        self,
-        in_features,
-        hidden_features=None,
-        out_features=None,
-        act_layer=nn.Hardswish,
-        norm_cfg=dict(type="BN"),
+            self,
+            in_features,
+            hidden_features=None,
+            out_features=None,
+            act_layer=nn.Hardswish,
+            norm_cfg=dict(type="BN"),
     ):
         super().__init__()
 
@@ -507,15 +512,15 @@ class ResBlock(nn.Module):
 
 class MHCA_stage(nn.Module):
     def __init__(
-        self,
-        embed_dim,
-        out_embed_dim,
-        num_layers=1,
-        num_heads=8,
-        mlp_ratio=3,
-        num_path=4,
-        norm_cfg=dict(type="BN"),
-        drop_path_list=[],
+            self,
+            embed_dim,
+            out_embed_dim,
+            num_layers=1,
+            num_heads=8,
+            mlp_ratio=3,
+            num_path=4,
+            norm_cfg=dict(type="BN"),
+            drop_path_list=[],
     ):
         super().__init__()
 
@@ -553,7 +558,7 @@ class MHCA_stage(nn.Module):
         out_concat = torch.cat(att_outputs, dim=1)
         out = self.aggregate(out_concat)
 
-        return out,att_outputs
+        return out, att_outputs
 
 
 def dpr_generator(drop_path_rate, num_layers, num_stages):
@@ -564,7 +569,7 @@ def dpr_generator(drop_path_rate, num_layers, num_stages):
     dpr = []
     cur = 0
     for i in range(num_stages):
-        dpr_per_stage = dpr_list[cur : cur + num_layers[i]]
+        dpr_per_stage = dpr_list[cur: cur + num_layers[i]]
         dpr.append(dpr_per_stage)
         cur += num_layers[i]
 
@@ -576,19 +581,19 @@ class MPViT(nn.Module):
     """Multi-Path ViT class."""
 
     def __init__(
-        self,
-        num_classes=80,
-        in_chans=3,
-        num_stages=4,
-        num_layers=[1, 1, 1, 1],
-        mlp_ratios=[8, 8, 4, 4],
-        num_path=[4, 4, 4, 4],
-        embed_dims=[64, 128, 256, 512],
-        num_heads=[8, 8, 8, 8],
-        drop_path_rate=0.2,
-        norm_cfg=dict(type="BN"),
-        norm_eval=False,
-        pretrained=None,
+            self,
+            num_classes=80,
+            in_chans=3,
+            num_stages=4,
+            num_layers=[1, 1, 1, 1],
+            mlp_ratios=[8, 8, 4, 4],
+            num_path=[4, 4, 4, 4],
+            embed_dims=[64, 128, 256, 512],
+            num_heads=[8, 8, 8, 8],
+            drop_path_rate=0.2,
+            norm_cfg=dict(type="BN"),
+            norm_eval=False,
+            pretrained=None,
     ):
         super().__init__()
 
@@ -626,7 +631,7 @@ class MPViT(nn.Module):
                 Patch_Embed_stage(
                     embed_dims[idx],
                     num_path=num_path[idx],
-                    isPool= True,
+                    isPool=True,
                     norm_cfg=self.conv_norm_cfg,
                 )
                 for idx in range(self.num_stages)
@@ -686,10 +691,9 @@ class MPViT(nn.Module):
         outs.append(x)
         for idx in range(self.num_stages):
             att_inputs = self.patch_embed_stages[idx](x)
-            #outs.append(att_inputs)
-            x,ff = self.mhca_stages[idx](att_inputs)
+            # outs.append(att_inputs)
+            x, ff = self.mhca_stages[idx](att_inputs)
             outs.append(x)
-
 
         return outs
 
