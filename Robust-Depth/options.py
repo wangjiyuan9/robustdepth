@@ -7,12 +7,15 @@ file_dir = os.path.dirname(__file__)  # the directory that options.py resides in
 class MonodepthOptions:
     def __init__(self):
         self.parser = argparse.ArgumentParser(description="vddepth options")
-
+        self.parser.add_argument("--debug",
+            type=int,
+            help="if set, we use a small dataset",
+            default=0)
         # PATHS
         self.parser.add_argument("--data_path",
                                  type=str,
                                  help="path to the training data",
-                                 default='data/KITTI_RAW')
+                                 default='/opt/data/private/wjy/backup/weather_datasets/kitti')
         self.parser.add_argument("--log_dir",
                                  type=str,
                                  help="log directory",
@@ -25,7 +28,7 @@ class MonodepthOptions:
                                  default="Robust-Depth")
         self.parser.add_argument("--use_augpose_loss",
                                  help="use pose loss for augmented images",
-                                 action="store_true")
+                                 action="store_true",default=True)
         self.parser.add_argument("--use_augpose_warping",
                                  help="Warping with augmented pose",
                                  action="store_true")
@@ -122,17 +125,17 @@ class MonodepthOptions:
                                  action="store_true")
         self.parser.add_argument("--warp_clear",
                                  help="if set, we use semi-augmented warping",
-                                 action="store_true")
+                                 action="store_true",default=True)
         self.parser.add_argument("--depth_loss",
                                  help="if set, we use pseudo supervised depth loss",
-                                 action="store_true")
+                                 action="store_true",default=True)
         self.parser.add_argument("--weighter",
                                  type=float,
                                  help="weight for proxy supervision",
-                                 default=0.001)
+                                 default=0.01)
         self.parser.add_argument("--teacher",
                                  help="if set, we use augmeted images during learning",
-                                 action="store_true")
+                                 action="store_true",default=True)
         self.parser.add_argument("--ViT",
                                  help="if set, use monovit depth network",
                                  action="store_true")
@@ -167,11 +170,11 @@ class MonodepthOptions:
         self.parser.add_argument("--width",
                                  type=int,
                                  help="input image width",
-                                 default=512)
+                                 default=640)
         self.parser.add_argument("--disparity_smoothness",
                                  type=float,
                                  help="disparity smoothness weight",
-                                 default=0.002)
+                                 default=0.001)
         self.parser.add_argument("--scales",
                                  nargs="+",
                                  type=int,
@@ -208,7 +211,7 @@ class MonodepthOptions:
                                  nargs="+",
                                  type=int,
                                  help="step size of the scheduler",
-                                 default=[15, 25, 29])
+                                 default=[20, 25, 29])
 
 
         self.parser.add_argument("--pytorch_random_seed",
@@ -251,7 +254,7 @@ class MonodepthOptions:
         self.parser.add_argument("--load_weights_folder",
                                  type=str,
                                  help="name of model to load",
-                                 default='logs/')
+                                 default=None)
         self.parser.add_argument("--models_to_load",
                                  nargs="+",
                                  type=str,
@@ -262,7 +265,7 @@ class MonodepthOptions:
         self.parser.add_argument("--log_frequency",
                                  type=int,
                                  help="number of batches between each tensorboard log",
-                                 default=250)
+                                 default=3500)
         self.parser.add_argument("--save_frequency",
                                  type=int,
                                  help="number of epochs between each save",

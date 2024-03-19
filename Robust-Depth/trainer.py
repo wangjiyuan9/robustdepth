@@ -141,13 +141,7 @@ class Trainer:
         train_dataset = self.dataset(
             self.opt.data_path, train_filenames, self.opt.height, self.opt.width,
             frames_to_load, 4, is_train=True, img_ext=img_ext, vertical = self.opt.do_vertical, tiling = self.opt.do_tiling, 
-            do_rain_aug = self.opt.do_rain, do_fog_aug = self.opt.do_fog, do_night_aug = self.opt.do_night, 
-            do_scale_aug = self.opt.do_scale, do_blur_aug = self.opt.do_blur, do_erase_aug = self.opt.do_erase, do_color_aug = self.opt.do_color,
-            do_gauss_aug = self.opt.do_gauss, do_shot_aug = self.opt.do_shot, do_impulse_aug = self.opt.do_impulse, do_defocus_aug = self.opt.do_defocus,
-            do_glass_aug = self.opt.do_glass, do_zoom_aug = self.opt.do_zoom, do_snow_aug = self.opt.do_snow, do_frost_aug = self.opt.do_frost,
-            do_elastic_aug = self.opt.do_elastic, do_pixelate_aug = self.opt.do_pixelate, do_jpeg_comp_aug = self.opt.do_jpeg_comp, do_flip_aug = self.opt.do_flip,
-            do_dawn_aug = self.opt.do_dawn, do_dusk_aug = self.opt.do_dusk, do_ground_snow_aug = self.opt.do_ground_snow, do_greyscale_aug = self.opt.do_greyscale,
-            do_Red_aug = self.opt.R, do_Green_aug = self.opt.G, do_Blue_aug = self.opt.B)
+            opt=self.opt)
         self.train_loader = DataLoader(
             train_dataset, self.opt.batch_size, shuffle=False,
             num_workers=self.opt.num_workers, pin_memory=True, drop_last=True,
@@ -167,13 +161,7 @@ class Trainer:
         robust_val_dataset = datasets_dict["kitti"](
             self.opt.data_path, val_filenames, self.opt.height, self.opt.width,
             frames_to_load, 4, is_train=False, robust_val=True, img_ext=img_ext, 
-            do_rain_aug = self.opt.do_rain, do_fog_aug = self.opt.do_fog, do_night_aug = self.opt.do_night, 
-            do_blur_aug = self.opt.do_blur, do_color_aug = self.opt.do_color,
-            do_gauss_aug = self.opt.do_gauss, do_shot_aug = self.opt.do_shot, do_impulse_aug = self.opt.do_impulse, do_defocus_aug = self.opt.do_defocus,
-            do_glass_aug = self.opt.do_glass, do_zoom_aug = self.opt.do_zoom, do_snow_aug = self.opt.do_snow, do_frost_aug = self.opt.do_frost,
-            do_elastic_aug = self.opt.do_elastic, do_pixelate_aug = self.opt.do_pixelate, do_jpeg_comp_aug = self.opt.do_jpeg_comp, do_flip_aug = self.opt.do_flip,
-            do_dawn_aug = self.opt.do_dawn, do_dusk_aug = self.opt.do_dusk, do_ground_snow_aug = self.opt.do_ground_snow, do_greyscale_aug = self.opt.do_greyscale,
-            do_Red_aug = self.opt.R, do_Green_aug = self.opt.G, do_Blue_aug = self.opt.B)
+            opt=self.opt)
 
 
         self.robust_val_loader = DataLoader(
@@ -219,13 +207,8 @@ class Trainer:
 
         print(f"You have selected: \
         \nTeacher:{self.opt.teacher}, MotionBlur:{self.opt.do_blur} \
-        \nGauss_N:{self.opt.do_gauss}, Shot_N:{self.opt.do_shot}, Impulse_N:{self.opt.do_impulse}, Defocus:{self.opt.do_defocus} \
-        \nGlass:{self.opt.do_glass}, Zoom:{self.opt.do_zoom}, Snow:{self.opt.do_snow}, Frost:{self.opt.do_frost} \
-        \nElastic:{self.opt.do_elastic}, Pixelate:{self.opt.do_pixelate}, JPEG:{self.opt.do_jpeg_comp}, Brightness:{self.opt.do_color} \
         \nRain:{self.opt.do_rain}, Fog:{self.opt.do_fog}, Night:{self.opt.do_night}, Flip:{self.opt.do_flip} \
-        \nScale:{self.opt.do_scale}, Tiling:{self.opt.do_tiling}, Vertical:{self.opt.do_vertical}, Erase:{self.opt.do_erase} \
-        \nGreyscale:{self.opt.do_greyscale}, GroundSnow:{self.opt.do_ground_snow}, Dusk:{self.opt.do_dusk}, Dawn:{self.opt.do_dawn} \
-        \nRed:{self.opt.R}, Green:{self.opt.G}, Blue:{self.opt.B}")
+        \nScale:{self.opt.do_scale}, Tiling:{self.opt.do_tiling}, Vertical:{self.opt.do_vertical}, Erase:{self.opt.do_erase}  ")
 
         print(f"Are we using Augmented pose loss? {self.opt.use_augpose_loss}\nAre we using Augmented pose warping? {self.opt.use_augpose_warping}")
 
