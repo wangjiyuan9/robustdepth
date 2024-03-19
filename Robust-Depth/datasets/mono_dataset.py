@@ -38,7 +38,7 @@ class MonoDataset(data.Dataset):
             num_scales,
             is_train=False,
             robust_val=False,
-            img_ext='.jpg',
+            img_ext='.png',
             mask_noise=False,
             feat_warp=False,
             vertical=False,
